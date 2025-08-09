@@ -17,7 +17,13 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+import logging
+
 modelPath = resource_path("gpt4all/models")
+modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
+
+if not os.path.isfile(modelFile):
+    raise FileNotFoundError(f"Model file not found: {modelFile}\nPlease download a GPT4All .gguf model and place it in gpt4all/models/.")
 
 model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath)
 modelLock = threading.Lock()
@@ -62,10 +68,15 @@ class CodeChangeHandler(FileSystemEventHandler):
         if not event.is_directory and os.path.splitext(event.src_path)[1] in codeExtensions:
             def generateAndShow():
                 try:
-                    with open(event.src_path, 'r', encoding='utf-8') as f:
-                        lines = f.readlines()
-                        snippet = ''.join(lines[-50:])
-                except Exception:
+                    try:
+                        with open(event.src_path, 'r', encoding='utf-8') as f:
+                            lines = f.readlines()
+                    except UnicodeDecodeError:
+                        with open(event.src_path, 'r', encoding='latin-1') as f:
+                            lines = f.readlines()
+                    snippet = ''.join(lines[-50:])
+                except Exception as e:
+                    logging.error(f"Error reading file snippet: {e}")
                     snippet = "Could not read file snippet."
 
                 personalityPrompt = personalities.get(self.getPersonality(), "")
@@ -75,6 +86,7 @@ class CodeChangeHandler(FileSystemEventHandler):
                     with modelLock:
                         comment = model.generate(prompt, max_tokens=100).strip()
                 except Exception as e:
+                    logging.error(f"Error generating comment: {e}")
                     comment = f"Error generating comment: {e}"
 
                 style = self.getStyle()
@@ -108,16 +120,19 @@ def startWatching():
 
     watching = True
     statusLabel.config(text="Status: Watching...")
-
-    threading.Thread(target=observer.join, daemon=True).start()
+    startBtn.config(state="disabled")
+    stopBtn.config(state="normal")
 
 def stopWatching():
     global observer, watching
     if observer:
         observer.stop()
+        observer.join()
         observer = None
     watching = False
     statusLabel.config(text="Status: Stopped")
+    startBtn.config(state="normal")
+    stopBtn.config(state="disabled")
 
 def browseFolder():
     selectedFolder = filedialog.askdirectory()
@@ -148,10 +163,10 @@ styleVar = tk.StringVar(value=list(styles.keys())[0])
 styleMenu = ttk.Combobox(root, textvariable=styleVar, values=list(styles.keys()), state="readonly", font=("Segoe UI", 10))
 styleMenu.grid(row=2, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
 
-startBtn = tk.Button(root, text="Start Watching", command=startWatching, font=("Segoe UI", 10), bg="#61afef", fg="white", relief="flat", activebackground="#528ecc")
+startBtn = tk.Button(root, text="Start Watching", command=startWatching, font=("Segoe UI", 10), bg="#61afef", fg="white", relief="flat", activebackground="#528ecc", state="normal")
 startBtn.grid(row=3, column=1, sticky="e", padx=(10,5), pady=15)
 
-stopBtn = tk.Button(root, text="Stop Watching", command=stopWatching, font=("Segoe UI", 10), bg="#e06c75", fg="white", relief="flat", activebackground="#b24b54")
+stopBtn = tk.Button(root, text="Stop Watching", command=stopWatching, font=("Segoe UI", 10), bg="#e06c75", fg="white", relief="flat", activebackground="#b24b54", state="disabled")
 stopBtn.grid(row=3, column=2, sticky="w", padx=(5,10), pady=15)
 
 statusLabel = tk.Label(root, text="Status: Idle", anchor="w", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 9, "italic"))
