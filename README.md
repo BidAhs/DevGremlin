@@ -4,6 +4,12 @@
 
 ---
 
+<p align="center">
+  <img src="devGremlinUI.png" alt="DevGremlin UI" width="500"/>
+</p>
+
+---
+
 ## Features
 
 - Monitors your chosen folder for changes in code files
