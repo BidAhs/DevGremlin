@@ -9,6 +9,8 @@ from gpt4all import GPT4All
 from styles import styles
 import logging
 import time
+from screeninfo import get_monitors
+
 
 modelPath = "gpt4all/models"
 modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
@@ -56,12 +58,13 @@ personalities = {
 
 
 class CodeChangeHandler(FileSystemEventHandler):
-    def __init__(self, getPersonality, getStyle, root):
+    def __init__(self, getPersonality, getStyle, root, getMonitor):
         self.getPersonality = getPersonality
         self.getStyle = getStyle
         self.root = root
+        self.getMonitor = getMonitor
         self._last_event_time = 0
-        self._debounce_delay = 0.5  # seconds
+        self._debounce_delay = 5
         self._event_scheduled = False
 
     def on_modified(self, event):
@@ -107,11 +110,14 @@ class CodeChangeHandler(FileSystemEventHandler):
             comment = f"Error generating comment: {e}"
 
         style = self.getStyle()
+        monitor = self.getMonitor()
 
         def show():
-            showPopup(comment, style, root=self.root)
+            from popup import showPopup
+            showPopup(comment, style, root=self.root, monitor=monitor)
 
         self.root.after(0, show)
+
 
 observer = None
 watching = False
@@ -127,7 +133,12 @@ def startWatching():
         statusLabel.config(text="Status: Already watching")
         return
 
-    eventHandler = CodeChangeHandler(lambda: personalityVar.get(), lambda: styleVar.get(), root)
+    eventHandler = CodeChangeHandler(
+        lambda: personalityVar.get(),
+        lambda: styleVar.get(),
+        root,
+        lambda: monitors[selectedMonitorIndex]
+    )
     observer = Observer()
     observer.schedule(eventHandler, path=folder, recursive=True)
     observer.start()
@@ -136,6 +147,7 @@ def startWatching():
     statusLabel.config(text="Status: Watching...")
     startBtn.config(state="disabled")
     stopBtn.config(state="normal")
+
 
 def stopWatching():
     global observer, watching
@@ -158,6 +170,22 @@ root.title("DevGremlin")
 root.geometry("500x220")
 root.configure(bg="#282c34")
 
+monitors = get_monitors()
+monitor_names = []
+for i, m in enumerate(monitors):
+    name = f"Monitor {i+1} ({m.width}x{m.height} at {m.x},{m.y})"
+    if m.is_primary:
+        name += " [Primary]"
+    monitor_names.append(name)
+
+selectedMonitorIndex = 0  
+
+monitorVar = tk.StringVar(value=monitor_names[selectedMonitorIndex])
+
+def on_monitor_selected(event):
+    global selectedMonitorIndex
+    selectedMonitorIndex = monitorMenu.current()
+
 folderPath = tk.StringVar()
 
 # browse
@@ -167,32 +195,38 @@ folderEntry.grid(row=0, column=1, padx=10, pady=(15,5))
 browseBtn = tk.Button(root, text="Browse...", command=browseFolder, font=("Segoe UI", 10))
 browseBtn.grid(row=0, column=2, padx=10, pady=(15,5))
 
+# monitor
+tk.Label(root, text="Popup Monitor:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
+monitorMenu = ttk.Combobox(root, textvariable=monitorVar, values=monitor_names, state="readonly", font=("Segoe UI", 10))
+monitorMenu.grid(row=1, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
+monitorMenu.bind("<<ComboboxSelected>>", on_monitor_selected)
+
 # personality
-tk.Label(root, text="Personality:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
+tk.Label(root, text="Personality:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=2, column=0, sticky="w", padx=10, pady=5)
 personalityVar = tk.StringVar(value=list(personalities.keys())[0])
 personalityMenu = ttk.Combobox(root, textvariable=personalityVar, values=list(personalities.keys()), state="readonly", font=("Segoe UI", 10))
-personalityMenu.grid(row=1, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
+personalityMenu.grid(row=2, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
 
 # popup
-tk.Label(root, text="Popup Style:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=2, column=0, sticky="w", padx=10, pady=5)
+tk.Label(root, text="Popup Style:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=3, column=0, sticky="w", padx=10, pady=5)
 styleVar = tk.StringVar(value=list(styles.keys())[0])
 styleMenu = ttk.Combobox(root, textvariable=styleVar, values=list(styles.keys()), state="readonly", font=("Segoe UI", 10))
-styleMenu.grid(row=2, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
+styleMenu.grid(row=3, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
 
 # buttons
 startBtn = tk.Button(root, text="Start Watching", command=startWatching,
                      font=("Segoe UI", 10, "bold"), fg="white", bg="#61afef",
                      activebackground="#528ecc", padx=8, pady=8)
-startBtn.grid(row=3, column=1, sticky="e", padx=(10,5), pady=15)
+startBtn.grid(row=4, column=1, sticky="e", padx=(10,5), pady=15)
 
 stopBtn = tk.Button(root, text="Stop Watching", command=stopWatching,
                     font=("Segoe UI", 10, "bold"), fg="white", bg="#e06c75",
                     activebackground="#b24b54", padx=8, pady=8, state="disabled")
-stopBtn.grid(row=3, column=2, sticky="w", padx=(5,10), pady=15)
+stopBtn.grid(row=4, column=2, sticky="w", padx=(5,10), pady=15)
 
 # status
 statusLabel = tk.Label(root, text="Status: Idle", anchor="w", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 9, "italic"))
-statusLabel.grid(row=4, column=0, columnspan=3, sticky="we", padx=10, pady=(0,10))
+statusLabel.grid(row=5, column=0, columnspan=3, sticky="we", padx=10, pady=(0,10))
 
 
 root.columnconfigure(1, weight=1)

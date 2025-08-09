@@ -1,6 +1,6 @@
 import tkinter as tk
 
-def showPopup(message, styleName="Classic Terminal", root=None):
+def showPopup(message, styleName="Classic Terminal", root=None, monitor=None):
     from styles import styles
 
     style = styles.get(styleName, styles["Classic Terminal"])
@@ -33,8 +33,16 @@ def showPopup(message, styleName="Classic Terminal", root=None):
     popup.update_idletasks()
     width = popup.winfo_width()
     height = popup.winfo_height()
-    screenWidth = popup.winfo_screenwidth()
-    screenHeight = popup.winfo_screenheight()
-    x = screenWidth - width - 20
-    y = screenHeight - height - 50
+
+    if monitor is None:
+        # fallback to current screen width/height
+        screenWidth = popup.winfo_screenwidth()
+        screenHeight = popup.winfo_screenheight()
+        x = screenWidth - width - 20
+        y = screenHeight - height - 50
+    else:
+        # Use monitor geometry for positioning
+        x = monitor.x + monitor.width - width - 20
+        y = monitor.y + monitor.height - height - 50
+
     popup.geometry(f"{width}x{height}+{x}+{y}")
