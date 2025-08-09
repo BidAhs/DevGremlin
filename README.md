@@ -29,7 +29,7 @@
 
 2. **Install dependencies:**
    ```bash
-   pip install watchdog gpt4all
+   pip install watchdog gpt4all screeninfo
    sudo apt install python3-tk
    pip install "gpt4all[cuda]" # OPTIONAL + ONLY NVIDIA GPUs 
    ```
