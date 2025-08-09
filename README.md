@@ -69,6 +69,7 @@ Choose your feedback style from these personalities:
 - **Concerned Parent:** Gentle concern and advice.
 - **Gremlin Mischief:** Playful and mischievous.
 - **SimplifyMaster (overconfident dev):** Always suggests rewriting everything.
+- **AnimeGirl (cute & bubbly coder):** Cheerful and energetic with a love for coding — gives enthusiastic, adorable feedback filled with cuteness!
 
 ---
 
