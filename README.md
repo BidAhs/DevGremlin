@@ -34,7 +34,7 @@
    ```
 
 3. **Download a GPT4All model:**
-   - Visit [GPT4All models](https://github.com/nomic-ai/gpt4all) and download a `.gguf` model file (e.g., `mistral-7b-instruct-v0.1.Q4_0.gguf`).
+   - Visit [GPT4All models]https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) and download a `.gguf` model file (e.g., `mistral-7b-instruct-v0.1.Q4_0.gguf`).
    - Place the model file in `gpt4all/models/` within the project directory.
 
 ---
@@ -44,7 +44,7 @@
 - Python 3.8+
 - Windows, macOS, or Linux
 - Tkinter (usually included with Python)
-- [GPT4All](https://github.com/nomic-ai/gpt4all) model file in `gpt4all/models/`
+- [GPT4All](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) model file in `gpt4all/models/`
 
 ---
 
@@ -113,7 +113,7 @@ MIT License
 
 ## Acknowledgments
 
-- [GPT4All](https://github.com/nomic-ai/gpt4all) for powering the AI feedback  
+- [GPT4All](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) for powering the AI feedback  
 - [Watchdog](https://pypi.org/project/watchdog/) for folder monitoring  
 - [Tkinter](https://docs.python.org/3/library/tkinter.html) for UI
 
