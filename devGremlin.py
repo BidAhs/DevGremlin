@@ -87,6 +87,7 @@ class CodeChangeHandler(FileSystemEventHandler):
             threading.Thread(target=delayed, daemon=True).start()
 
     def generateAndShow(self, filepath):
+        self.root.after(0, lambda: statusLabel.config(text="Status: Querying AI..."))
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
@@ -115,6 +116,7 @@ class CodeChangeHandler(FileSystemEventHandler):
         def show():
             from popup import showPopup
             showPopup(comment, style, root=self.root, monitor=monitor)
+            statusLabel.config(text="Status: Watching...")
 
         self.root.after(0, show)
 
