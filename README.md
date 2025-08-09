@@ -61,10 +61,10 @@
 Choose your feedback style from these personalities:
 
 - **DevGPT (sarcastic senior dev):** Dry humor and clever critiques.
-- **Cheerful Intern:** Positive and encouraging.
+- **Yandere** Obsessive, sweet, but slighty creepy.
 - **Concerned Parent:** Gentle concern and advice.
 - **Gremlin Mischief:** Playful and mischievous.
-- **SimplifyMaster (overconfident dev):** Always suggests rewriting everything.
+- **Simplifying Master:** Always suggests rewriting everything.
 - **AnimeGirl (cute & bubbly coder):** Cheerful and energetic with a love for coding.
 
 ---
@@ -77,6 +77,8 @@ Customize your notification look:
 - **Light Mode:** Clean, modern, and bright.
 - **Dark Mode:** Sleek and easy on the eyes.
 - **Anime Pink** Pink and Anime girly.
+- **Cyberpunk Neon** Brighter neon colors.
+- **Cozy Coffe** Nice lighter browns. 
 
 ---
 
