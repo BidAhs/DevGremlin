@@ -30,6 +30,7 @@
 2. **Install dependencies:**
    ```bash
    pip install watchdog gpt4all
+   sudo apt install python3-tk
    ```
 
 3. **Download a GPT4All model:**
