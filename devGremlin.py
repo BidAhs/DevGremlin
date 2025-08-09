@@ -10,7 +10,7 @@ from styles import styles
 import sys
 
 def resource_path(relative_path):
-    
+
     if hasattr(sys, "_MEIPASS"):
         base_path = sys._MEIPASS
     else:
@@ -24,7 +24,7 @@ modelPath = resource_path("gpt4all/models")
 modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
 
 if not os.path.isfile(modelFile):
-    raise FileNotFoundError(f"Model file not found: {modelFile}\nPlease download a GPT4All .gguf model and place it in gpt4all/models/.")
+    print(f"Model file not found: {modelFile}\nPlease download a GPT4All .gguf model and place it in gpt4all/models/.")
 
 model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath)
 modelLock = threading.Lock()
