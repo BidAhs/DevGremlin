@@ -7,25 +7,14 @@ import os
 from popup import showPopup
 from gpt4all import GPT4All
 from styles import styles
-import sys
-
-def resource_path(relative_path):
-
-    if hasattr(sys, "_MEIPASS"):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
 import logging
 
-modelPath = resource_path("gpt4all/models")
+modelPath = "gpt4all/models"
 modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
 
 if not os.path.isfile(modelFile):
     print(f"Model file not found: {modelFile}\nPlease download a GPT4All .gguf model and place it in gpt4all/models/.")
-    sys.exit(1)
+    exit(1)
 
 model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath)
 modelLock = threading.Lock()
@@ -152,31 +141,40 @@ root.configure(bg="#282c34")
 
 folderPath = tk.StringVar()
 
-# UI Elements
+# browse
 tk.Label(root, text="Folder to watch:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=0, column=0, sticky="w", padx=10, pady=(15,5))
 folderEntry = tk.Entry(root, textvariable=folderPath, width=40, font=("Segoe UI", 10))
 folderEntry.grid(row=0, column=1, padx=10, pady=(15,5))
 browseBtn = tk.Button(root, text="Browse...", command=browseFolder, font=("Segoe UI", 10))
 browseBtn.grid(row=0, column=2, padx=10, pady=(15,5))
 
+# personality
 tk.Label(root, text="Personality:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
 personalityVar = tk.StringVar(value=list(personalities.keys())[0])
 personalityMenu = ttk.Combobox(root, textvariable=personalityVar, values=list(personalities.keys()), state="readonly", font=("Segoe UI", 10))
 personalityMenu.grid(row=1, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
 
+# popup
 tk.Label(root, text="Popup Style:", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 10)).grid(row=2, column=0, sticky="w", padx=10, pady=5)
 styleVar = tk.StringVar(value=list(styles.keys())[0])
 styleMenu = ttk.Combobox(root, textvariable=styleVar, values=list(styles.keys()), state="readonly", font=("Segoe UI", 10))
 styleMenu.grid(row=2, column=1, columnspan=2, sticky="ew", padx=10, pady=5)
 
-startBtn = tk.Button(root, text="Start Watching", command=startWatching, font=("Segoe UI", 10), bg="#61afef", fg="white", relief="flat", activebackground="#528ecc", state="normal")
+# buttons
+startBtn = tk.Button(root, text="Start Watching", command=startWatching,
+                     font=("Segoe UI", 10, "bold"), fg="white", bg="#61afef",
+                     activebackground="#528ecc", padx=8, pady=8)
 startBtn.grid(row=3, column=1, sticky="e", padx=(10,5), pady=15)
 
-stopBtn = tk.Button(root, text="Stop Watching", command=stopWatching, font=("Segoe UI", 10), bg="#e06c75", fg="white", relief="flat", activebackground="#b24b54", state="disabled")
+stopBtn = tk.Button(root, text="Stop Watching", command=stopWatching,
+                    font=("Segoe UI", 10, "bold"), fg="white", bg="#e06c75",
+                    activebackground="#b24b54", padx=8, pady=8, state="disabled")
 stopBtn.grid(row=3, column=2, sticky="w", padx=(5,10), pady=15)
 
+# status
 statusLabel = tk.Label(root, text="Status: Idle", anchor="w", bg="#282c34", fg="#abb2bf", font=("Segoe UI", 9, "italic"))
 statusLabel.grid(row=4, column=0, columnspan=3, sticky="we", padx=10, pady=(0,10))
+
 
 root.columnconfigure(1, weight=1)
 

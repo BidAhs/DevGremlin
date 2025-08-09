@@ -23,4 +23,12 @@ styles = {
         "pady": 12,
         "wraplength": 320
     },
+    "Anime Pink": {
+        "bg": "#ffe4ec", 
+        "fg": "#d6336c",
+        "font": ("Comic Sans MS", 12, "bold"), 
+        "padx": 20,
+        "pady": 15,
+        "wraplength": 320
+    },
 }
