@@ -23,7 +23,7 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/DevGremlin.git
+   git clone https://github.com/BidAhs/DevGremlin.git
    cd DevGremlin
    ```
 
