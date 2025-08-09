@@ -33,10 +33,6 @@
    sudo apt install python3-tk
    ```
 
-3. **Download a GPT4All model:**
-   - Visit [GPT4All models](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) and download a `.gguf` model file (e.g., `mistral-7b-instruct-v0.1.Q4_0.gguf`).
-   - Place the model file in `gpt4all/models/` within the project directory.
-
 ---
 
 ## Requirements
@@ -44,7 +40,7 @@
 - Python 3.8+
 - Windows, macOS, or Linux
 - Tkinter (usually included with Python)
-- [GPT4All](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) model file in `gpt4all/models/`
+- [GPT4All](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) model file in `gpt4all/models/` (should be installed when code is ran)
 
 ---
 
@@ -80,6 +76,7 @@ Customize your notification look:
 - **Classic Terminal:** Retro green-on-black terminal vibes.
 - **Light Mode:** Clean, modern, and bright.
 - **Dark Mode:** Sleek and easy on the eyes.
+- **Anime Pink** Pink and Anime girly.
 
 ---
 
@@ -93,7 +90,6 @@ Customize your notification look:
 
 ## Troubleshooting
 
-- **Missing model file:** Download a `.gguf` model and place it in `gpt4all/models/`.
 - **Tkinter errors:** Ensure Python was installed with Tkinter support.
 - **No popups:** Check your OS's window manager or popup blocker settings.
 - **Permission errors:** Run the app with appropriate permissions to access the folder you want to watch.
