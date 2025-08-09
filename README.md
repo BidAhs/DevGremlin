@@ -54,6 +54,8 @@
 2. Select the folder you want to watch.
 3. Pick a personality and popup style.
 4. Click **Start Watching**.
+5. Work on code and save the file with changes.
+6. Click on the message (bottom right) to make it close.
 
 ---
 
