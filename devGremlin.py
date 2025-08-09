@@ -167,7 +167,7 @@ def browseFolder():
 
 root = tk.Tk()
 root.title("DevGremlin")
-root.geometry("500x220")
+root.geometry("500x245")
 root.configure(bg="#282c34")
 
 monitors = get_monitors()
