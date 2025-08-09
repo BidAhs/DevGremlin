@@ -8,6 +8,7 @@ from popup import showPopup
 from gpt4all import GPT4All
 from styles import styles
 import logging
+import time
 
 modelPath = "gpt4all/models"
 modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
@@ -30,9 +31,10 @@ personalities = {
         "You are a sarcastic senior developer with sharp wit. "
         "Read this code snippet and give a brief, clever critique with some dry humor."
     ),
-    "Cheerful Intern": (
-        "You are an eager and optimistic intern excited about coding. "
-        "Give a positive and encouraging comment on the following code snippet."
+    "Yandere": (
+        "You are a sweet but obsessive and slightly creepy yandere anime girl who is deeply devoted to the code and the developer. "
+        "Review the code snippet with intense passion, mixing cute excitement with slightly possessive or jealous remarks. "
+        "Use a mix of affectionate and quirky expressions."
     ),
     "Concerned Parent": (
         "You are a cautious and worried parent who cares deeply but maybe too much. "
@@ -42,7 +44,7 @@ personalities = {
         "You are a cheeky gremlin who loves to tease developers. Be funny. "
         "Make a short, playful, and humorous comment about this code snippet."
     ),
-    "SimplifyMaster (overconfident dev)": (
+    "Simplifying Master": (
         "You are an overly confident programmer who thinks every complex code can be easily rewritten from scratch better. "
         "Encourage the user to just rewrite the entire code snippet, acting like it's the simplest and best option, even though it's clearly not."
     ),
@@ -52,45 +54,66 @@ personalities = {
     ),
 }
 
+
 class CodeChangeHandler(FileSystemEventHandler):
     def __init__(self, getPersonality, getStyle, root):
         self.getPersonality = getPersonality
         self.getStyle = getStyle
         self.root = root
+        self._last_event_time = 0
+        self._debounce_delay = 0.5  # seconds
+        self._event_scheduled = False
 
     def on_modified(self, event):
-        if not event.is_directory and os.path.splitext(event.src_path)[1] in codeExtensions:
-            def generateAndShow():
-                try:
-                    try:
-                        with open(event.src_path, 'r', encoding='utf-8') as f:
-                            lines = f.readlines()
-                    except UnicodeDecodeError:
-                        with open(event.src_path, 'r', encoding='latin-1') as f:
-                            lines = f.readlines()
-                    snippet = ''.join(lines[-50:])
-                except Exception as e:
-                    logging.error(f"Error reading file snippet: {e}")
-                    snippet = "Could not read file snippet."
+        if event.is_directory or os.path.splitext(event.src_path)[1] not in codeExtensions:
+            return
 
-                personalityPrompt = personalities.get(self.getPersonality(), "")
-                prompt = f"{personalityPrompt}\n{snippet}\nComment humorously and briefly:"
+        now = time.time()
+        self._last_event_time = now
 
-                try:
-                    with modelLock:
-                        comment = model.generate(prompt, max_tokens=100).strip()
-                except Exception as e:
-                    logging.error(f"Error generating comment: {e}")
-                    comment = f"Error generating comment: {e}"
+        if not self._event_scheduled:
+            self._event_scheduled = True
+            def delayed():
+                while True:
+                    time.sleep(self._debounce_delay)
+                    if time.time() - self._last_event_time >= self._debounce_delay:
+                        self._event_scheduled = False
+                        self.generateAndShow(event.src_path)
+                        break
 
-                style = self.getStyle()
+            threading.Thread(target=delayed, daemon=True).start()
 
-                def show():
-                    showPopup(comment, style, root=self.root)
+    def generateAndShow(self, filepath):
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+        except UnicodeDecodeError:
+            with open(filepath, 'r', encoding='latin-1') as f:
+                lines = f.readlines()
+        except Exception as e:
+            logging.error(f"Error reading file snippet: {e}")
+            snippet = "Could not read file snippet."
+        else:
+            snippet = ''.join(lines[-50:])
 
-                self.root.after(0, show)
+        personalityPrompt = personalities.get(self.getPersonality(), "")
+        prompt = f"{personalityPrompt}\n{snippet}\nComment humorously and briefly:"
 
-            threading.Thread(target=generateAndShow, daemon=True).start()
+        try:
+            with modelLock:
+                comment = model.generate(prompt, max_tokens=100).strip()
+        except Exception as e:
+            logging.error(f"Error generating comment: {e}")
+            comment = f"Error generating comment: {e}"
+
+        style = self.getStyle()
+
+        def show():
+            showPopup(comment, style, root=self.root)
+
+        self.root.after(0, show)
+
+        threading.Thread(target=generateAndShow, daemon=True).start()
 
 
 observer = None
