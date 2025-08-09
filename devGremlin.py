@@ -113,9 +113,6 @@ class CodeChangeHandler(FileSystemEventHandler):
 
         self.root.after(0, show)
 
-        threading.Thread(target=generateAndShow, daemon=True).start()
-
-
 observer = None
 watching = False
 
