@@ -31,7 +31,7 @@
    ```bash
    pip install watchdog gpt4all
    sudo apt install python3-tk
-   pip install "gpt4all[cuda] # OPTIONAL + ONLY NVIDIA GPUs 
+   pip install "gpt4all[cuda]" # OPTIONAL + ONLY NVIDIA GPUs 
    ```
 
 ---
