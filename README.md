@@ -34,7 +34,7 @@
    ```
 
 3. **Download a GPT4All model:**
-   - Visit [GPT4All models]https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) and download a `.gguf` model file (e.g., `mistral-7b-instruct-v0.1.Q4_0.gguf`).
+   - Visit [GPT4All models](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF) and download a `.gguf` model file (e.g., `mistral-7b-instruct-v0.1.Q4_0.gguf`).
    - Place the model file in `gpt4all/models/` within the project directory.
 
 ---
