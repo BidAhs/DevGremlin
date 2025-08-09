@@ -97,6 +97,7 @@ Customize your notification look:
 - **Tkinter errors:** Ensure Python was installed with Tkinter support.
 - **No popups:** Check your OS's window manager or popup blocker settings.
 - **Permission errors:** Run the app with appropriate permissions to access the folder you want to watch.
+- **Failed to load CUDA** Can ignore it application works without it still. (Also only available for NVIDIA GPUs)
 
 ---
 
