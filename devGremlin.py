@@ -114,7 +114,6 @@ class CodeChangeHandler(FileSystemEventHandler):
         monitor = self.getMonitor()
 
         def show():
-            from popup import showPopup
             showPopup(comment, style, root=self.root, monitor=monitor)
             statusLabel.config(text="Status: Watching...")
 
