@@ -13,8 +13,7 @@ modelPath = "gpt4all/models"
 modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
 
 if not os.path.isfile(modelFile):
-    print(f"Model file not found: {modelFile}\nPlease download a GPT4All .gguf model and place it in gpt4all/models/.")
-    exit(1)
+    print(f"Model file not found: Downloading it now.")
 
 model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath)
 modelLock = threading.Lock()
