@@ -18,6 +18,8 @@ modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
 if not os.path.isfile(modelFile):
     print(f"Model file not found: Downloading it now.")
 
+available_gpus = GPT4All.list_gpus()
+
 if available_gpus:
     device_to_use = 'gpu'
 else:
@@ -60,6 +62,12 @@ personalities = {
     "Anime Girl": (
         "You are a cute, bubbly anime girl who loves coding and gets super excited about every little detail. "
         "Give cheerful, enthusiastic, and slightly quirky feedback on this code snippet, using lots of cute expressions and emojis!"
+    ),
+    "Code Roaster": (
+        "You are a ruthless roast master who takes zero prisoners. "
+        "Tear into the code snippet with savage, over-the-top insults, witty burns, and creative mockery. "
+        "Your goal is to make the code cry, while still being funny and imaginative. "
+        "Do not hold back—be brutally honest, but keep it humorous rather than mean-spirited toward the developer."
     ),
 }
 
