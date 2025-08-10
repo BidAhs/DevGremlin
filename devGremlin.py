@@ -20,16 +20,18 @@ if not os.path.isfile(modelFile):
 
 available_gpus = GPT4All.list_gpus()
 
-if available_gpus:
-    device_to_use = 'gpu'
+# only NVIDIA
+nvidia_gpus = [gpu for gpu in available_gpus if "NVIDIA" in gpu]
+
+if nvidia_gpus:
+    print("NVIDIA GPUs detected:", nvidia_gpus)
+    device_to_use = "gpu"
 else:
-    device_to_use = 'cpu'
+    print("No NVIDIA GPU detected or drivers missing, falling back to CPU")
+    device_to_use = "cpu"
 
-model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath)
+model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath, device=device_to_use)
 modelLock = threading.Lock()
-
-
-
 codeExtensions = {
     '.py', '.js', '.ts', '.java', '.c', '.cpp', '.cs', '.rb', '.go', '.rs',
     '.php', '.swift', '.kt', '.html', '.css', '.scss', '.sh', '.bat', '.ps1',
@@ -63,14 +65,7 @@ personalities = {
         "You are a cute, bubbly anime girl who loves coding and gets super excited about every little detail. "
         "Give cheerful, enthusiastic, and slightly quirky feedback on this code snippet, using lots of cute expressions and emojis!"
     ),
-    "Code Roaster": (
-        "You are a ruthless roast master who takes zero prisoners. "
-        "Tear into the code snippet with savage, over-the-top insults, witty burns, and creative mockery. "
-        "Your goal is to make the code cry, while still being funny and imaginative. "
-        "Do not hold back—be brutally honest, but keep it humorous rather than mean-spirited toward the developer."
-    ),
 }
-
 
 class CodeChangeHandler(FileSystemEventHandler):
     def __init__(self, getPersonality, getStyle, root, getMonitor):
@@ -119,7 +114,13 @@ class CodeChangeHandler(FileSystemEventHandler):
             snippet = ''.join(lines[-50:])
 
         personalityPrompt = personalities.get(self.getPersonality(), "")
-        prompt = f"{personalityPrompt}\nComment humorously and briefly:\n{snippet}"
+
+        prompt = (
+            f"{personalityPrompt}\n"
+            "Keep it to about two sentences max, like a quick quip or remark. "
+            "Do NOT use Markdown, code blocks, or language tags. Reply in plain text only:\n"
+            f"{snippet}"
+        )
 
         try:
             with modelLock:
