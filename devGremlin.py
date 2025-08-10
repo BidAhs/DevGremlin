@@ -18,8 +18,15 @@ modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
 if not os.path.isfile(modelFile):
     print(f"Model file not found: Downloading it now.")
 
+if available_gpus:
+    device_to_use = 'gpu'
+else:
+    device_to_use = 'cpu'
+
 model = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf", model_path=modelPath)
 modelLock = threading.Lock()
+
+
 
 codeExtensions = {
     '.py', '.js', '.ts', '.java', '.c', '.cpp', '.cs', '.rb', '.go', '.rs',
@@ -69,6 +76,9 @@ class CodeChangeHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if event.is_directory or os.path.splitext(event.src_path)[1] not in codeExtensions:
+            return
+
+        if statusLabel.cget("text") != "Status: Watching...":
             return
 
         now = time.time()
