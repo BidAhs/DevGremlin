@@ -11,7 +11,6 @@ import logging
 import time
 from screeninfo import get_monitors
 
-
 modelPath = "gpt4all/models"
 modelFile = os.path.join(modelPath, "mistral-7b-instruct-v0.1.Q4_0.gguf")
 
@@ -117,7 +116,7 @@ class CodeChangeHandler(FileSystemEventHandler):
 
         prompt = (
             f"{personalityPrompt}\n"
-            "Keep it to about two sentences max, like a quick quip or remark. "
+            "Limit your response to exactly two sentences, like a quick quip or remark. "
             "Do NOT use Markdown, code blocks, or language tags. Reply in plain text only:\n"
             f"{snippet}"
         )
