@@ -64,7 +64,7 @@
 Choose your feedback style from these personalities:
 
 - **DevGPT (sarcastic senior dev):** Dry humor and clever critiques.
-- **Yandere** Obsessive, sweet, but slighty creepy.
+- **Yandere:** Obsessive, sweet, but slighty creepy.
 - **Concerned Parent:** Gentle concern and advice.
 - **Gremlin Mischief:** Playful and mischievous.
 - **Simplifying Master:** Always suggests rewriting everything.
