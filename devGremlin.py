@@ -111,7 +111,7 @@ class CodeChangeHandler(FileSystemEventHandler):
             snippet = ''.join(lines[-50:])
 
         personalityPrompt = personalities.get(self.getPersonality(), "")
-        prompt = f"{personalityPrompt}\n{snippet}\nComment humorously and briefly:"
+        prompt = f"{personalityPrompt}\nComment humorously and briefly:\n{snippet}"
 
         try:
             with modelLock:
